@@ -1,0 +1,276 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title> SESI 5 </title>
+    <style>
+        *,
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
+        #containerLogin {
+            background: linear-gradient(to right, #ffffff, #f7e9ff);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #root {
+            background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+            color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 50px 0px 50px;
+            border-radius: 20px;
+            gap: 10px;
+            box-shadow: 0px 8px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        #usernameInput {
+            padding: 5px;
+            background-color: #ffffff;
+            color: #5e5e5e;
+            border: 1pt solid #c59ff0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #passwordInput {
+            padding: 5px;
+            background-color: #ffffff;
+            color: #5e5e5e;
+            border: 1pt solid #c59ff0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #loginButton {
+            padding: 5px 75px;
+            font-size: 10px;
+            background-color: #ffffff;
+            color: #5e5e5e;
+            border: 1pt solid #c59ff0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #signupButton {
+            padding: 5px 69px;
+            font-size: 10px;
+            background-color: #ffffff;
+            color: #5e5e5e;
+            border: 1pt solid #c59ff0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #logoutButton {
+            padding: 5px 64px;
+            background-color: #ffffff;
+            color: #5e5e5e;
+            border: 1pt solid #c59ff0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #backButtonId {
+            padding: 5px;
+            background-color: #ffffff;
+            color: #5e5e5e;
+            border: 1pt solid #c59ff0;
+            border-radius: 5px;
+            position: relative;
+            left: -77px;
+            display: none;
+        }
+
+        .fa-backward-step {
+            color: #5e5e5e;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+    <div id="containerLogin">
+        <div id="root">
+
+            <input type="text" placeholder="username" id="usernameInput" />
+            <input type="password" placeholder="password" id="passwordInput" />
+            <button onclick="onLogin()" id="loginButton">Login</button>
+            <button onclick="onSignUp()" id="signupButton">Sign Up</button>
+            <button onclick="onLogout()" id="logoutButton">Log Out</button>
+            <button onclick="backButton()" id="backButtonId"><i class="fa-solid fa-backward-step"></i></button>
+            <br />
+            <h1 id="admin">
+                Selamat datang <span id="adminName"></span>
+                <h1 />
+                <h1 id="basic">
+                    Selamat datang <span id="basicName"></span>
+                    <h1 />
+        </div>
+
+
+
+    </div>
+
+
+    <script type="application/javascript">
+
+        let root = document.getElementById('root');
+        let usernameInput = document.getElementById('usernameInput');
+        let passwordInput = document.getElementById('passwordInput');
+        let admin = document.getElementById('admin');
+        let basic = document.getElementById('basic');
+        let loginButton = document.getElementById('loginButton');
+        let logoutButton = document.getElementById('logoutButton');
+        let signupButton = document.getElementById('signupButton');
+        let backButtonId = document.getElementById('backButtonId');
+
+
+        admin.style.display = "none";
+        basic.style.display = "none";
+        logoutButton.style.display = "none";
+        backButtonId.style.display = 'none';
+
+
+        window.onload = function () {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            toggleButtons(isLoggedIn)
+
+            if (isLoggedIn) {
+                signupButton.style.display = 'none';
+            } else {
+                signupButton.style.display = 'block';
+            }
+
+        };
+
+        function toggleButtons(isLoggedIn) {
+            if (isLoggedIn) {
+                // User sedang login
+                usernameInput.style.display = "none";
+                passwordInput.style.display = 'none';
+                loginButton.style.display = 'none';
+                signupButton.style.display = 'none';
+                logoutButton.style.display = "block";
+            } else {
+                usernameInput.style.display = "block";
+                passwordInput.style.display = 'block';
+                loginButton.style.display = 'block';
+                signupButton.style.display = 'block';
+                logoutButton.style.display = "none";
+            }
+        }
+
+
+        function onSignUp() {
+            signupButton.style.display = 'block';
+
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+
+            // cek lamun username atau password kosong
+            if (usernameInput.value.trim() == "" || passwordInput.value.trim() == "") {
+                alert('Username atau Password tidak boleh kosong!');
+                return;
+            }
+
+            // cek username sudah ada, kalau sudah akan ngeprint isi alert
+            const cekUser = users.find(user => user.username === usernameInput.value);
+            if (cekUser) {
+                alert("Sign up error, silahkan coba lagi");
+                usernameInput.value = '';
+                passwordInput.value = '';
+                return;
+            }
+
+            const newUser = {
+                username: usernameInput.value,
+                password: btoa(passwordInput.value)
+            };
+
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert("Akun berhasil dibuat! Silakan login.");
+
+            usernameInput.value = '';
+            passwordInput.value = '';
+
+        }
+
+
+        function onLogin() {
+            console.log('tombol login diklik');
+            console.log(usernameInput.value);
+            console.log(passwordInput.value);
+
+            backButtonId.style.display = 'none';
+
+            if (usernameInput.value.trim() == "" || passwordInput.value.trim() == "") {
+                alert('Username atau Password tidak boleh kosong!');
+                logoutButton.style.display = "none"
+                return;
+            }
+
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(user => user.username === usernameInput.value && user.password === btoa(passwordInput.value));
+            if (user) {
+
+                alert("Login berhasil!");
+                localStorage.setItem('isLoggedIn', 'true');
+                toggleButtons(true);
+
+                usernameInput.value = '';
+                passwordInput.value = '';
+
+            } else {
+                alert("Username atau Password salah!")
+            }
+
+
+        }
+
+        if (localStorage.getItem('username')) {
+            usernameInput.style.display = "none";
+            passwordInput.style.display = 'none';
+            loginButton.style.display = 'none';
+            logoutButton.style.display = "block";
+
+            if (localStorage.getItem('role') == "admin") {
+                admin.style.display = "block";
+                basic.style.display = "none";
+            } else {
+                basic.style.display = "block";
+                admin.style.display = "none";
+            }
+
+        }
+
+        function onLogout() {
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            localStorage.removeItem('isLoggedIn');
+            location.reload();
+            signupButton.style.display = 'block';
+        }
+
+        function backButton() {
+            loginButton.style.display = 'block';
+            signupButton.style.display = 'block';
+            backButtonId.style.display = 'none';
+        }
+
+    </script>
+</body>
+
+</html>
